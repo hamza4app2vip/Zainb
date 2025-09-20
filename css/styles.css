@@ -1,0 +1,930 @@
+/*
+  VIP Stego v2 — Glass + Animations
+*/
+:root{
+  --bg:#070a14;
+  --fg:#eaf2ff;
+  --muted:#9bb0d1;
+  --accent:#00a884;
+  --primary:#6d5efc;
+  --secondary:#22d3ee;
+  --glass:rgba(255,255,255,0.06);
+  --border:rgba(255,255,255,0.12);
+  --danger:#ff5577;
+  --success:#22c55e;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:'Cairo', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial;
+  color:var(--fg); background: radial-gradient(90vmax 70vmax at 10% 10%, #0b1022 0%, transparent 60%), #070a14;
+  overflow-x:hidden;
+}
+
+/* Background Orbs + Gridlines */
+.bg{position:fixed; inset:0; z-index:-2; overflow:hidden}
+.gridlines{
+  position:absolute; inset:0;
+  background-image: linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(circle at 50% 40%, black, transparent 70%);
+  opacity:.25;
+}
+.orb{
+  position:absolute; width:60vmin; height:60vmin; filter: blur(80px); opacity:.7;
+  border-radius:50%;
+  animation: float 12s ease-in-out infinite;
+}
+.orb-a{ top:-15vmin; right:-10vmin; background: radial-gradient(circle at 40% 40%, var(--secondary), transparent 60%); animation-delay:0s}
+.orb-b{ bottom:-20vmin; left:-10vmin; background: radial-gradient(circle at 60% 60%, var(--accent), transparent 60%); animation-delay:2s}
+.orb-c{ top:40%; left:50%; background: radial-gradient(circle at 50% 50%, #6d5efc, transparent 60%); animation-delay:4s}
+@keyframes float{ 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-18px) } }
+
+.container{ max-width:1200px; margin-inline:auto; padding:24px }
+.header{ display:flex; align-items:center; justify-content:space-between; gap:16px }
+.brand{ display:flex; gap:12px; align-items:center }
+.logo{ width:48px; height:48px; filter: drop-shadow(0 10px 24px rgba(109,94,252,.35)); animation: pop-in .6s ease both }
+h1{ margin:0; font-size:28px; font-weight:800; letter-spacing:.3px }
+.subtitle{ margin:2px 0 0; color:var(--muted); font-size:14px }
+.nav{ display:flex; gap:8px; flex-wrap:wrap }
+.pill{
+  display:inline-flex; align-items:center; gap:8px; padding:10px 14px;
+  background:var(--glass); border:1px solid var(--border); color:var(--fg);
+  border-radius:999px; text-decoration:none; transition: transform .2s, background .2s, box-shadow .2s;
+}
+.pill:hover{ transform: translateY(-2px); background:rgba(255,255,255,0.1); box-shadow: 0 10px 20px rgba(0,0,0,.25) }
+
+.grid-solo{ display:grid; grid-template-columns: 1fr; gap:24px }
+.grid{ display:grid; gap:24px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+.card{
+  padding:22px; border-radius:24px; border:1px solid var(--border);
+  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+  backdrop-filter: blur(12px) saturate(130%);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);
+  transform: translateY(8px); opacity: 0;
+}
+.card.show{ transform: translateY(0); opacity: 1; transition: transform .6s cubic-bezier(.2,.7,.2,1), opacity .6s }
+
+h2{margin-top:0; font-size:22px; font-weight:800}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+
+.field{margin:14px 0}
+label{display:block; margin-bottom:6px; font-weight:700}
+textarea, input[type="number"], input[type="password"], input[type="text"], select{
+  width:100%; padding:12px 14px; border-radius:16px; border:1px solid var(--border);
+  background:rgba(0,0,0,0.3); color:var(--fg); outline:none;
+  transition:border .15s ease, background .15s ease, transform .15s, filter .5s ease, box-shadow .5s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* تأثيرات كلمة المرور عند التشويش */
+input[type="password"], input[type="text"]{
+  position: relative;
+}
+
+input[type="password"]::before, input[type="text"]::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  background-size: 200% 200%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+input[type="password"]:focus::before, input[type="text"]:focus::before{
+  opacity: 0.5;
+  animation: shimmer 1.5s infinite;
+}
+
+/* تأثيرات التشويش المتقدمة */
+input[type="password"].blurred, input[type="text"].blurred{
+  position: relative;
+  color: transparent;
+  text-shadow: 0 0 10px rgba(109,94,252,0.8);
+}
+
+input[type="password"].blurred::after, input[type="text"].blurred::after{
+  content: attr(data-value) / " ";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--fg);
+  filter: blur(8px);
+  overflow: hidden;
+  white-space: nowrap;
+  z-index: -1;
+}
+
+@keyframes shimmer{
+  0% { background-position: -200% -200%; }
+  100% { background-position: 200% 200%; }
+}
+textarea{min-height:120px; resize:vertical}
+textarea.output{min-height:160px}
+textarea:focus, input:focus, select:focus{border-color: var(--primary); background: rgba(0,0,0,0.35); transform: translateY(-1px)}
+
+.pass-wrap{display:flex; gap:8px}
+.btn.icon{min-width:44px; position: relative; overflow: hidden;}
+
+.btn.icon::after{
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn.icon:active::after{
+  width: 300px;
+  height: 300px;
+}
+
+.strength{ height:10px; background:rgba(255,255,255,.08); border:1px solid var(--border); border-radius:999px; overflow:hidden; margin-top:6px }
+.strength i{ display:block; height:100%; width:0%; background: linear-gradient(90deg, var(--accent), var(--secondary)); transition: width .4s }
+
+.dropzone{
+  position:relative; display:flex; align-items:center; justify-content:center; gap:8px;
+  min-height:130px; border:1px dashed var(--border); border-radius:16px;
+  background:rgba(0,0,0,0.25); cursor:pointer; overflow:hidden;
+}
+.dropzone span{ position:relative; z-index:2 }
+.dropzone::before{
+  content:''; position:absolute; inset:0; background: linear-gradient(120deg, transparent, rgba(255,255,255,.06), transparent);
+  transform: translateX(-100%); animation: shimmer 2.2s infinite;
+}
+@keyframes shimmer{ 0%{transform: translateX(-100%)} 100%{transform: translateX(100%)} }
+.dropzone:hover{ background: rgba(0,0,0,.32) }
+
+.advanced{margin-top:10px}
+.adv-grid{display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));}
+
+.actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+.btn{
+  position:relative;
+  padding:12px 16px; border-radius:14px; border:1px solid var(--border);
+  background:rgba(255,255,255,0.06); color:var(--fg);
+  cursor:pointer; font-weight:800; letter-spacing:.3px;
+  transition:transform .18s ease, background .18s ease, border .18s ease, box-shadow .18s ease;
+  overflow:hidden;
+}
+.btn:hover{transform:translateY(-2px); background:rgba(255,255,255,0.1); box-shadow: 0 14px 28px rgba(0,0,0,.25)}
+.btn.primary{
+  background:linear-gradient(135deg, var(--primary), var(--secondary));
+  border-color:transparent; color:white;
+  box-shadow: 0 10px 24px rgba(109,94,252,.35);
+}
+.btn.primary:hover{filter:brightness(1.07)}
+
+/* Ripple */
+.btn.ripple::after{
+  content:''; position:absolute; width:10px; height:10px; background:rgba(255,255,255,.5);
+  border-radius:50%; transform: scale(0); opacity:0; pointer-events:none;
+}
+.btn.ripple:active::after{
+  transform: scale(25); opacity:.08; transition: transform .6s, opacity .8s;
+  left: var(--x,50%); top: var(--y,50%);
+}
+
+/* أنيميشن القفل */
+.lock-animation-container {
+  width: 120px;
+  height: 120px;
+  margin: 20px auto;
+  position: relative;
+  perspective: 1200px;
+  overflow: visible;
+}
+
+.lock-icon {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+}
+
+.lock-body {
+  width: 90px;
+  height: 80px;
+  background: linear-gradient(135deg, 
+    rgba(109,94,252,0.95) 0%, 
+    rgba(34,211,238,0.95) 100%);
+  border-radius: 12px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 
+    0 15px 30px rgba(0,0,0,0.25), 
+    inset 0 -3px 8px rgba(0,0,0,0.15),
+    0 0 30px rgba(109,94,252,0.4);
+  overflow: visible;
+}
+
+.lock-shackle {
+  width: 40px;
+  height: 40px;
+  border: 8px solid rgba(255,255,255,0.95);
+  border-bottom: none;
+  border-radius: 40px 40px 0 0;
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  transform-origin: bottom center;
+  transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  box-shadow: 0 -8px 15px rgba(0,0,0,0.15);
+}
+
+.lock-shackle.locked {
+  transform: translateX(-50%) rotate(0deg);
+}
+
+.lock-shackle.unlocked {
+  transform: translateX(-50%) rotate(-45deg);
+}
+
+.lock-base {
+  width: 50px;
+  height: 10px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 5px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+}
+
+.lock-keyhole {
+  width: 24px;
+  height: 30px;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 100%);
+  border-radius: 12px 12px 0 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.6);
+}
+
+.lock-keyhole::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle at 30% 30%, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.9) 100%);
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.6);
+}
+
+/* المفتاح الفاخر */
+.lock-key {
+  width: 100px;
+  height: 45px;
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-45deg);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  z-index: 10;
+  filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+}
+
+.lock-key.visible {
+  opacity: 1;
+}
+
+.key-handle {
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle at 30% 30%, #fff 0%, #ffd700 30%, #ffed4e 60%, #fff 100%);
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-shadow: 
+    0 5px 15px rgba(0,0,0,0.3),
+    inset -2px -2px 5px rgba(0,0,0,0.2),
+    inset 2px 2px 5px rgba(255,255,255,0.8);
+  animation: keyShine 3s infinite alternate;
+}
+
+.key-shaft {
+  width: 60px;
+  height: 16px;
+  background: linear-gradient(90deg, #ffd700 0%, #ffed4e 25%, #fff 50%, #ffed4e 75%, #ffd700 100%);
+  position: absolute;
+  top: 14px;
+  left: 40px;
+  border-radius: 0 8px 8px 0;
+  box-shadow: 
+    0 3px 8px rgba(0,0,0,0.2),
+    inset 0 -1px 2px rgba(0,0,0,0.1);
+  animation: keyShaftRotate 4s infinite alternate;
+}
+
+.key-teeth {
+  width: 20px;
+  height: 8px;
+  background: linear-gradient(90deg, #ffed4e 0%, #ffd700 50%, #fff 100%);
+  position: absolute;
+  top: 20px;
+  right: 5px;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 
+    0 2px 4px rgba(0,0,0,0.15),
+    inset 0 -1px 2px rgba(0,0,0,0.1);
+  animation: keyTeethGlow 2s infinite alternate;
+}
+
+.key-teeth::after {
+  content: '';
+  width: 20px;
+  height: 8px;
+  background: linear-gradient(90deg, #fff 0%, #ffd700 50%, #ffed4e 100%);
+  position: absolute;
+  top: 4px;
+  right: 0;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 
+    0 1px 3px rgba(0,0,0,0.1),
+    inset 0 -1px 1px rgba(0,0,0,0.1);
+}
+
+.key-teeth::before {
+  content: '';
+  width: 20px;
+  height: 8px;
+  background: linear-gradient(90deg, #ffd700 0%, #ffed4e 50%, #fff 100%);
+  position: absolute;
+  top: 8px;
+  right: 0;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 
+    0 1px 3px rgba(0,0,0,0.1),
+    inset 0 -1px 1px rgba(0,0,0,0.1);
+}
+
+.lock-body.locked .lock-shackle {
+  transform: translateX(-50%) rotate(0deg);
+}
+
+.lock-body.unlocked .lock-shackle {
+  transform: translateX(-50%) rotate(-45deg);
+}
+
+.lock-body.locked {
+  animation: lockPulse 2s infinite;
+}
+
+.lock-body.unlocked {
+  animation: unlockPulse 2s infinite;
+}
+
+/* أنيميشن المفتاح المتحرك */
+.key-insert {
+  animation: keyInsert 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+.key-turn {
+  animation: keyTurn 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+.key-remove {
+  animation: keyRemove 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+@keyframes keyInsert {
+  0% {
+    transform: translateX(-50%) translateY(-150px) rotate(-45deg);
+    opacity: 0;
+    filter: brightness(0.5);
+  }
+  10% {
+    opacity: 1;
+    filter: brightness(0.8);
+  }
+  50% {
+    filter: brightness(1.2);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) rotate(-45deg);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes keyTurn {
+  0% {
+    transform: translateX(-50%) translateY(0) rotate(-45deg);
+    filter: brightness(1);
+  }
+  25% {
+    transform: translateX(-50%) translateY(0) rotate(-10deg);
+    filter: brightness(1.3);
+  }
+  50% {
+    transform: translateX(-50%) translateY(0) rotate(45deg);
+    filter: brightness(1.5);
+    box-shadow: 0 0 20px rgba(255,215,0,0.8);
+  }
+  75% {
+    transform: translateX(-50%) translateY(0) rotate(10deg);
+    filter: brightness(1.2);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+    filter: brightness(1);
+    box-shadow: none;
+  }
+}
+
+@keyframes keyRemove {
+  0% {
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  10% {
+    opacity: 0.8;
+    filter: brightness(0.8);
+  }
+  50% {
+    filter: brightness(0.5);
+  }
+  100% {
+    transform: translateX(-50%) translateY(-150px) rotate(-45deg);
+    opacity: 0;
+    filter: brightness(0.3);
+  }
+}
+
+@keyframes lockPulse {
+  0% { box-shadow: 0 15px 30px rgba(0,0,0,0.25), inset 0 -3px 8px rgba(0,0,0,0.15), 0 0 30px rgba(109,94,252,0.4); }
+  50% { box-shadow: 0 20px 35px rgba(0,0,0,0.3), inset 0 -3px 8px rgba(0,0,0,0.15), 0 0 40px rgba(109,94,252,0.6); }
+  100% { box-shadow: 0 15px 30px rgba(0,0,0,0.25), inset 0 -3px 8px rgba(0,0,0,0.15), 0 0 30px rgba(109,94,252,0.4); }
+}
+
+/* تأثيرات الخطأ */
+.encryption-error {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: radial-gradient(circle, rgba(255,85,119,0.2) 0%, transparent 70%);
+  opacity: 0;
+  animation: errorPulse 1s ease-out;
+}
+
+@keyframes errorPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+@keyframes unlockPulse {
+  0% { box-shadow: 0 15px 30px rgba(0,0,0,0.25), inset 0 -3px 8px rgba(0,0,0,0.15), 0 0 30px rgba(34,211,238,0.4); }
+  50% { box-shadow: 0 20px 35px rgba(0,0,0,0.3), inset 0 -3px 8px rgba(0,0,0,0.15), 0 0 40px rgba(34,211,238,0.6); }
+  100% { box-shadow: 0 15px 30px rgba(0,0,0,0.25), inset 0 -3px 8px rgba(0,0,0,0.15), 0 0 30px rgba(34,211,238,0.4); }
+}
+
+/* تأثيرات إضافية عند التفاعل */
+.lock-animation-container:hover .lock-icon {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+.lock-animation-container:active .lock-icon {
+  transform: scale(0.95);
+}
+
+/* تأثيرات المفتاح */
+.key-insert {
+  animation: keyInsert 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+.key-turn {
+  animation: keyTurn 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+.key-remove {
+  animation: keyRemove 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+@keyframes keyInsert {
+  0% {
+    transform: translateX(-50%) translateY(-100px) rotate(-30deg);
+    opacity: 0;
+  }
+  20% {
+    transform: translateX(-50%) translateY(-20px) rotate(-30deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) rotate(-30deg);
+    opacity: 1;
+  }
+}
+
+@keyframes keyTurn {
+  0% {
+    transform: translateX(-50%) translateY(0) rotate(-30deg);
+  }
+  50% {
+    transform: translateX(-50%) translateY(0) rotate(30deg);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes keyRemove {
+  0% {
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-100px) rotate(-30deg);
+    opacity: 0;
+  }
+}
+
+.preview-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  order: -1; /* وضع المعاينة في الأعلى */
+}
+
+.preview-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.preview-label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--fg);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 2;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.preview {
+  display: block;
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.preview-container:hover .preview {
+  transform: scale(1.02);
+}
+
+/* تأكد من أن الحاوية لا تزداد حجمًا كثيرًا */
+.preview-container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.output {
+  margin-top: 20px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.log{
+  margin-top:10px; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size:12px; white-space:pre-wrap; background:rgba(0,0,0,0.25);
+  border:1px solid var(--border); border-radius:12px; padding:12px;
+}
+.log .ok{color:#a7f3d0}
+.log .warn{color:#fde68a}
+.log .err{color:#fecaca}
+
+.footer{display:flex; justify-content:space-between; gap:12px; align-items:center; color:var(--muted); font-size:12px; border-top:1px dashed var(--border); margin-top:8px; padding-top:16px}
+
+/* Home hero */
+.hero{
+  display:grid; grid-template-columns: 1.2fr .8fr; gap:24px; align-items:center; min-height: 52vh;
+}
+@media (max-width: 980px){ .hero{grid-template-columns:1fr} }
+.hero-content .display{ font-size:clamp(22px,4.2vw,42px); margin:0 0 8px; text-shadow: 0 4px 24px rgba(0,0,0,.35) }
+.hero-content .lead{ color:var(--muted); margin:0 0 12px }
+.badges{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px }
+.badge{ padding:8px 10px; border-radius:999px; border:1px solid var(--border); background:var(--glass) }
+.hero-art{ position:relative; min-height:280px }
+.cube{
+  position:absolute; inset:0; margin:auto; width:180px; height:180px; transform-style:preserve-3d; animation: spin 8s linear infinite;
+  background: linear-gradient(135deg, rgba(109,94,252,.5), rgba(34,211,238,.5));
+  filter: drop-shadow(0 18px 40px rgba(109,94,252,.25)); border-radius:24px;
+}
+@keyframes spin{ from{transform: rotateX(0) rotateY(0)} to{transform: rotateX(360deg) rotateY(360deg)} }
+.ring{
+  position:absolute; width:380px; height:380px; left:50%; top:50%; transform: translate(-50%,-50%);
+  border: 1px dashed rgba(255,255,255,.25); border-radius:50%;
+  animation: pulse 4s ease-in-out infinite;
+}
+@keyframes pulse{ 0%,100%{transform: translate(-50%,-50%) scale(1)} 50%{transform: translate(-50%,-50%) scale(1.06)} }
+.shine{ position:absolute; width:220px; height:220px; left:50%; top:50%; transform: translate(-50%,-50%);
+  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.16), transparent 60%);
+  filter: blur(20px); animation: breathe 6s ease-in-out infinite;
+}
+@keyframes breathe{ 0%,100%{ opacity:.5 } 50%{ opacity:.9 } }
+
+/* صورة 3D للقفل */
+.hero-model {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 220px;
+  height: 220px;
+  perspective: 1200px;
+  z-index: 1;
+}
+
+.model-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: rotate-model 20s linear infinite;
+}
+
+.model-face {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  background: linear-gradient(135deg, rgba(109,94,252,0.15), rgba(34,211,238,0.15));
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.model-face::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  transform: rotate(45deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: rotate(45deg) translateX(-100%); }
+  100% { transform: rotate(45deg) translateX(100%); }
+}
+
+/* تحديد مواقع الوجوه الستة للمكعب */
+.front { 
+  transform: translateZ(110px);
+  background-image: url('assets/ai-lock.svg');
+  background-size: 80px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-blend-mode: overlay;
+}
+.back { 
+  transform: rotateY(180deg) translateZ(110px);
+  background-image: url('assets/ai-lock.svg');
+  background-size: 80px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-blend-mode: overlay;
+}
+.right { transform: rotateY(90deg) translateZ(110px); }
+.left { transform: rotateY(-90deg) translateZ(110px); }
+.top { transform: rotateX(90deg) translateZ(110px); }
+.bottom { transform: rotateX(-90deg) translateZ(110px); }
+
+@keyframes rotate-model {
+  0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+  25% { transform: rotateX(90deg) rotateY(90deg) rotateZ(0); }
+  50% { transform: rotateX(180deg) rotateY(180deg) rotateZ(90deg); }
+  75% { transform: rotateX(270deg) rotateY(270deg) rotateZ(180deg); }
+  100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+}
+
+/* تأثيرات فاخرة للتشفير الناجح */
+.encryption-success {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.encryption-success::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(34,211,238,0.4) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  animation: encryption-pulse 2s ease-out;
+}
+
+.encryption-success::after {
+  content: "✓ التشفير مكتمل!";
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  color: #22d3ee;
+  font-size: 32px;
+  font-weight: bold;
+  text-shadow: 0 0 20px rgba(34,211,238,0.8);
+  animation: encryption-text 2s ease-out;
+}
+
+/* تأثيرات تشفير متقدمة */
+.encryption-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+  background: radial-gradient(circle at center, rgba(109,94,252,0.1) 0%, transparent 70%);
+  opacity: 0;
+  animation: encryption-glow-animation 2s ease-out;
+}
+
+@keyframes encryption-glow-animation {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+@keyframes encryption-pulse {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    width: 150vmax;
+    height: 150vmax;
+    opacity: 0;
+  }
+}
+
+@keyframes encryption-text {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+/* تأثيرات فاخرة لفك التشفير الناجح */
+.decryption-success {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.decryption-success::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(109,94,252,0.4) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  animation: decryption-pulse 2s ease-out;
+}
+
+.decryption-success::after {
+  content: "✓ فك التشفير مكتمل!";
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  color: #6d5efc;
+  font-size: 32px;
+  font-weight: bold;
+  text-shadow: 0 0 20px rgba(109,94,252,0.8);
+  animation: decryption-text 2s ease-out;
+}
+
+@keyframes decryption-pulse {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    width: 150vmax;
+    height: 150vmax;
+    opacity: 0;
+  }
+}
+
+@keyframes decryption-text {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Tilt effect base */
+.tilt{ will-change: transform; transition: transform .15s ease }
+
+/* Reveal animations */
+[data-animate] { opacity:0; transform: translateY(16px); }
+.show [data-animate], [data-animate].reveal { opacity:1; transform:none; transition: opacity .8s, transform .8s }
+
+@keyframes pop-in{ from{transform: scale(.96); opacity:0} to{transform: scale(1); opacity:1} }

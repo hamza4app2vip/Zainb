@@ -1,0 +1,184 @@
+/* أنماق قسم اختيار الصورة والمعاينة */
+.image-upload-container {
+  margin-bottom: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.image-upload-container:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 15px rgba(0, 123, 255, 0.2);
+}
+
+.upload-area {
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.upload-area:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.05) 100%);
+}
+
+.upload-area i {
+  color: #4a90e2;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.upload-area:hover i {
+  color: #6bb0ff;
+  transform: scale(1.1);
+}
+
+.upload-text {
+  color: #ffffff;
+  font-size: 16px;
+  margin: 10px 0;
+  font-weight: 500;
+}
+
+.upload-hint {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+}
+
+.image-details-container {
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.image-preview {
+  padding: 20px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.image-preview .preview {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.image-info {
+  padding: 20px;
+}
+
+.image-info h3 {
+  color: #4a90e2;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.info-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+.info-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.info-value {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.image-status {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-indicator.good {
+  border-color: rgba(76, 175, 80, 0.5);
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.status-indicator i {
+  color: #4caf50;
+  margin-right: 8px;
+}
+
+.status-indicator span {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+/* تصميم متجاوب للشاشات الصغيرة */
+@media (max-width: 768px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .upload-area {
+    padding: 20px;
+  }
+
+  .image-upload-container,
+  .image-details-container {
+    border-radius: 8px;
+  }
+}
+
+/* تأثيرات إضافية */
+.upload-area.drag-over {
+  background: rgba(74, 144, 226, 0.1);
+  border-color: #4a90e2;
+}
+
+.image-details-container {
+  animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

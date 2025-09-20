@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0a0f1e" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <script defer src="js/animations.js"></script>
+
+  <title>VIP Stego • الرئيسية</title>
+</head>
+<body class="page page-home">
+  <!-- قائمة الهامبرجر للجوال -->
+  <div class="mobile-menu-toggle">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <!-- القائمة الجانبية الزجاجية -->
+  <div class="sidebar glass">
+    <div class="sidebar-header">
+      <div class="brand">
+        <img src="assets/ai-lock.svg" alt="AI Lock" class="logo"/>
+        <div>
+          <h1>VIP Stego</h1>
+          <p class="subtitle">AES‑256‑GCM + LSB</p>
+        </div>
+      </div>
+      <div class="close-btn">
+        <i class="fas fa-times"></i>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="pill">الرئيسية</a>
+      <a href="encrypt.html" class="pill">تشفير</a>
+      <a href="decrypt.html" class="pill">فك التشفير</a>
+      <a href="about.html" class="pill">حول</a>
+    </nav>
+  </div>
+
+  <!-- طبقة التعتيم عند فتح القائمة -->
+  <div class="overlay"></div>
+
+  <canvas id="workCanvas" class="hidden" aria-hidden="true"></canvas>
+  <div class="bg">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+    <div class="gridlines"></div>
+  </div>
+
+    <header class="container header">
+      <div class="brand">
+        <img src="assets/ai-lock.svg" alt="AI Lock" class="logo"/>
+        <div>
+          <h1>VIP Stego</h1>
+          <p class="subtitle">AES‑256‑GCM + LSB • واجهة زجاجية فاخرة</p>
+        </div>
+      </div>
+      <nav class="nav desktop-nav">
+        <a href="index.html" class="pill">الرئيسية</a>
+        <a href="encrypt.html" class="pill">تشفير</a>
+        <a href="decrypt.html" class="pill">فك التشفير</a>
+        <a href="about.html" class="pill">حول</a>
+      </nav>
+    </header>
+
+  <main class="container">
+    <section class="hero glass" data-animate="fade-up">
+      <div class="hero-content">
+        <h2 class="display">تشفير وإخفاء نص داخل صورة بجودة VIP</h2>
+        <p class="lead">تشفير حقيقي AES‑256‑GCM ودمج بالبت الأقل أهمية LSB — كل العمليات محليًا على جهازك.</p>
+        <div class="actions">
+          <a class="btn primary" href="encrypt.html">ابدأ بالتشفير</a>
+          <a class="btn" href="decrypt.html">فك التشفير</a>
+        </div>
+        <div class="badges">
+          <span class="badge">AES‑256‑GCM</span>
+          <span class="badge">PBKDF2‑SHA256</span>
+          <span class="badge">LSB 3b/px</span>
+          <span class="badge">PWA / Offline</span>
+        </div>
+      </div>
+      <div class="hero-art">
+        <div class="hero-model">
+          <div class="model-container">
+            <div class="model-face front">تشفير</div>
+            <div class="model-face back">فك</div>
+            <div class="model-face right">آمن</div>
+            <div class="model-face left">خاص</div>
+            <div class="model-face top">VIP</div>
+            <div class="model-face bottom">Stego</div>
+          </div>
+        </div>
+        <div class="cube"></div>
+        <div class="ring"></div>
+        <div class="shine"></div>
+      </div>
+    </section>
+
+    <section class="features" data-animate="fade-up">
+      <article class="card glass tilt">
+        <h3>تشفير قوي</h3>
+        <p>مفتاح مشتق عبر PBKDF2 بعدد دورات قابل للتعديل، ووسم AAD يربط الحزمة بأبعاد الصورة.</p>
+      </article>
+      <article class="card glass tilt">
+        <h3>إخفاء ذكي</h3>
+        <p>LSB عبر قنوات RGB لدمج آمن دون التأثير الكبير على المظهر البصري.</p>
+      </article>
+      <article class="card glass tilt">
+        <h3>خصوصية كاملة</h3>
+        <p>لا يتم رفع أي بيانات للخوادم — كل شيء يحدث محليًا داخل المتصفح.</p>
+      </article>
+    </section>
+  </main>
+  <footer class="container footer">
+    <span>© VIP Stego</span>
+    <span>PWA: يعمل دون اتصال</span>
+  </footer>
+
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{})}
+
+// كود التحكم بالقائمة الجانبية
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+  const sidebar = document.querySelector('.sidebar');
+  const closeBtn = document.querySelector('.close-btn');
+  const overlay = document.querySelector('.overlay');
+
+  // فتح القائمة الجانبية
+  mobileMenuToggle.addEventListener('click', function() {
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+
+  // إغلاق القائمة الجانبية
+  function closeSidebar() {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', closeSidebar);
+  overlay.addEventListener('click', closeSidebar);
+
+  // إغلاق القائمة عند النقر على الروابط
+  const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', closeSidebar);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0a0f1e" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <script defer src="js/animations.js"></script>
+
+  <title>VIP Stego • فك التشفير</title>
+</head>
+<body class="page page-decrypt">
+  <!-- قائمة الهامبرجر للجوال -->
+  <div class="mobile-menu-toggle">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <!-- القائمة الجانبية الزجاجية -->
+  <div class="sidebar glass">
+    <div class="sidebar-header">
+      <div class="brand">
+        <img src="assets/ai-lock.svg" alt="AI Lock" class="logo"/>
+        <div>
+          <h1>VIP Stego</h1>
+          <p class="subtitle">AES‑256‑GCM + LSB</p>
+        </div>
+      </div>
+      <div class="close-btn">
+        <i class="fas fa-times"></i>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="pill">الرئيسية</a>
+      <a href="encrypt.html" class="pill">تشفير</a>
+      <a href="decrypt.html" class="pill">فك التشفير</a>
+      <a href="about.html" class="pill">حول</a>
+    </nav>
+  </div>
+
+  <!-- طبقة التعتيم عند فتح القائمة -->
+  <div class="overlay"></div>
+
+  <canvas id="workCanvas" class="hidden" aria-hidden="true"></canvas>
+  <div class="bg">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+    <div class="gridlines"></div>
+  </div>
+
+    <header class="container header">
+      <div class="brand">
+        <img src="assets/ai-lock.svg" alt="AI Lock" class="logo"/>
+        <div>
+          <h1>VIP Stego</h1>
+          <p class="subtitle">AES‑256‑GCM + LSB • واجهة زجاجية فاخرة</p>
+        </div>
+      </div>
+      <nav class="nav desktop-nav">
+        <a href="index.html" class="pill">الرئيسية</a>
+        <a href="encrypt.html" class="pill">تشفير</a>
+        <a href="decrypt.html" class="pill">فك التشفير</a>
+        <a href="about.html" class="pill">حول</a>
+      </nav>
+    </header>
+
+  <main class="container grid-solo">
+    <section class="card glass tilt" data-animate="fade-up">
+      <h2>فك التشفير من صورة</h2>
+      <p class="muted">اختر الصورة التي تحتوي على البيانات المخفية وأدخل كلمة المرور الصحيحة.</p>
+
+      <!-- معاينة الصورة في الأعلى -->
+      <div class="preview-container" id="previewDecryptContainer" style="display: none;">
+        <div class="preview-label">الصورة المُختارة</div>
+        <img id="previewDecoded" class="preview" alt="معاينة الصورة المُختارة" />
+      </div>
+
+      <div class="field" data-animate="fade-up">
+        <label>الصورة المُشفّرة</label>
+        <div class="dropzone" id="dz-decode">
+          <input id="fileDecode" type="file" accept="image/png,image/jpeg,image/webp" />
+          <span>اسحب الصورة هنا أو انقر للاختيار</span>
+        </div>
+        <div id="imgMetaDecode" class="hint"></div>
+      </div>
+
+      <div class="field password-field" data-animate="fade-up">
+        <label>كلمة المرور</label>
+        <div class="pass-wrap">
+          <input id="passwordDecode" type="password" placeholder="أدخل كلمة المرور" />
+          <button id="togglePassDecode" class="btn icon" title="إظهار/إخفاء">👁️</button>
+        </div>
+      </div>
+
+      <div class="lock-animation-container" data-animate="fade-up">
+        <div class="lock-icon">
+          <div class="lock-body locked">
+            <div class="lock-shackle locked"></div>
+            <div class="lock-base"></div>
+          </div>
+          <div class="lock-keyhole"></div>
+        </div>
+      </div>
+      <div class="actions" data-animate="fade-up">
+        <button id="btnDecrypt" class="btn primary ripple">🗝️ فك التشفير</button>
+        <button id="btnCopy" class="btn ripple" disabled>📋 نسخ النص</button>
+      </div>
+
+      <div id="decryptLog" class="log"></div>
+      <textarea id="outputText" class="output" placeholder="سيظهر النص المفكوك هنا..." readonly></textarea>
+    </section>
+  </main>
+  <footer class="container footer">
+    <span>© VIP Stego</span>
+    <span>PWA: يعمل دون اتصال</span>
+  </footer>
+
+<script src="js/utils.js"></script>
+<script src="js/stego.js"></script>
+<script src="js/crypto.js"></script>
+<script src="js/app-decrypt.js"></script>
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{})}
+
+// كود التحكم بالقائمة الجانبية
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+  const sidebar = document.querySelector('.sidebar');
+  const closeBtn = document.querySelector('.close-btn');
+  const overlay = document.querySelector('.overlay');
+
+  // فتح القائمة الجانبية
+  mobileMenuToggle.addEventListener('click', function() {
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+
+  // إغلاق القائمة الجانبية
+  function closeSidebar() {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', closeSidebar);
+  overlay.addEventListener('click', closeSidebar);
+
+  // إغلاق القائمة عند النقر على الروابط
+  const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', closeSidebar);
+  });
+});
+</script>
+</body>
+</html>

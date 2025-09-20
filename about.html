@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0a0f1e" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+  <script defer src="js/animations.js"></script>
+
+  <title>VIP Stego • حول</title>
+</head>
+<body class="page page-about">
+  <!-- قائمة الهامبرجر للجوال -->
+  <div class="mobile-menu-toggle">
+    <i class="fas fa-bars"></i>
+  </div>
+
+  <!-- القائمة الجانبية الزجاجية -->
+  <div class="sidebar glass">
+    <div class="sidebar-header">
+      <div class="brand">
+        <img src="assets/ai-lock.svg" alt="AI Lock" class="logo"/>
+        <div>
+          <h1>VIP Stego</h1>
+          <p class="subtitle">AES‑256‑GCM + LSB</p>
+        </div>
+      </div>
+      <div class="close-btn">
+        <i class="fas fa-times"></i>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="pill">الرئيسية</a>
+      <a href="encrypt.html" class="pill">تشفير</a>
+      <a href="decrypt.html" class="pill">فك التشفير</a>
+      <a href="about.html" class="pill">حول</a>
+    </nav>
+  </div>
+
+  <!-- طبقة التعتيم عند فتح القائمة -->
+  <div class="overlay"></div>
+
+  <div class="bg">
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+    <div class="gridlines"></div>
+  </div>
+
+    <header class="container header">
+      <div class="brand">
+        <img src="assets/ai-lock.svg" alt="AI Lock" class="logo"/>
+        <div>
+          <h1>VIP Stego</h1>
+          <p class="subtitle">AES‑256‑GCM + LSB • واجهة زجاجية فاخرة</p>
+        </div>
+      </div>
+      <nav class="nav desktop-nav">
+        <a href="index.html" class="pill">الرئيسية</a>
+        <a href="encrypt.html" class="pill">تشفير</a>
+        <a href="decrypt.html" class="pill">فك التشفير</a>
+        <a href="about.html" class="pill">حول</a>
+      </nav>
+    </header>
+
+  <main class="container">
+    <section class="card glass tilt" data-animate="fade-up">
+      <h2>حول الأمان</h2>
+      <ul class="about">
+        <li>تشفير <strong>AES‑256‑GCM</strong> بمفتاح مشتق عبر <strong>PBKDF2‑SHA256</strong>.</li>
+        <li>دمج الحزمة داخل الصورة باستخدام <strong>LSB</strong> (3 بت/بكسل).</li>
+        <li>لا تُرفع بياناتك لأي خادم — كل العمليات محليًا.</li>
+        <li>استخدم كلمة مرور طويلة ومعقّدة؛ الإخفاء ليس بديلًا عن التشفير.</li>
+      </ul>
+      <p class="muted small">ملاحظة: أساليب LSB قد تُكتشف بتحليلات متقدمة. للمستويات الحساسة جدًا، استخدم قنوات ومفاتيح قوية جدًا وصورًا كبيرة عالية الجودة.</p>
+    </section>
+  </main>
+  <footer class="container footer">
+    <span>© VIP Stego</span>
+    <span>PWA: يعمل دون اتصال</span>
+  </footer>
+
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{})}
+
+// كود التحكم بالقائمة الجانبية
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+  const sidebar = document.querySelector('.sidebar');
+  const closeBtn = document.querySelector('.close-btn');
+  const overlay = document.querySelector('.overlay');
+
+  // فتح القائمة الجانبية
+  mobileMenuToggle.addEventListener('click', function() {
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+
+  // إغلاق القائمة الجانبية
+  function closeSidebar() {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', closeSidebar);
+  overlay.addEventListener('click', closeSidebar);
+
+  // إغلاق القائمة عند النقر على الروابط
+  const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', closeSidebar);
+  });
+});
+</script>
+</body>
+</html>
